@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Chat App</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="chat-box">
+      <div class="chat-messages">
+        <div class="message">
+          <p>Hello, how can I help you today?</p>
+        </div>
+      </div>
+      <div class="chat-input">
+        <input type="text" placeholder="Type your message here...">
+        <button>Send</button>
+      </div>
+    </div>
+  </div>
+  <script src="script.js"></script>
+  <script>
+    const chatBox = document.querySelector('.chat-box');
+    const chatMessages = document.querySelector('.chat-messages');
+    const chatInput = document.querySelector('.chat-input');
+    const inputField = document.querySelector('input');
+    const sendButton = document.querySelector('button');
+    // Create a new WebSocket connection
+    const socket = new WebSocket('ws://localhost:8080');
+    // Handle incoming messages
+    socket.onmessage = (event) => {
+      // Parse the JSON message
+      const message = JSON.parse(event.data);
+      // Add the message to the chat box
+      const newMessage = document.createElement('div');
+      newMessage.classList.add('message');
+      newMessage.innerHTML = `<p>${message}</p>`;
+      chatMessages.appendChild(newMessage);
+    };
+    // Handle sending messages
+    sendButton.addEventListener('click', () => {
+      const message = inputField.value;
+      if (message) {
+        // Send the message to the server
+        socket.send(JSON.stringify(message));
+        // Add the message to the chat box
+        const newMessage = document.createElement('div');
+        newMessage.classList.add('message');
+        newMessage.innerHTML = `<p>${message}</p>`;
+        chatMessages.appendChild(newMessage);
+        // Clear the input field
+        inputField.value = '';
+      }
+    });
+  </script>
+</body>
+</html>
